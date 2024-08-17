@@ -21,10 +21,10 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 
 app.use((err, req, res, next) => {
-  const status = false;
+  const success = false;
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
-  return res.status(statusCode).json({ statusCode, message, status });
+  return res.status(statusCode).json({ statusCode, message, success });
 })
 
 app.listen(PORT, () => {
