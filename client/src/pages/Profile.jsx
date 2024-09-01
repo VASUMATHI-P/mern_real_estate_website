@@ -1,18 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
 import { app } from '../firebase';
+import { updateUserStart, updateUserSuccess, updateUserFailure, signInFailure } from '../../redux/user/userSlice.js';
 
 
 export default function Profile() {
-  const {currentUser} = useSelector((state) => state.user)
+  const {currentUser, loading, error} = useSelector((state) => state.user)
   const fileRef = useRef(null);
   const [file, setFile] = useState(null);
   const [fileProgress, setFileProgress] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const dispatch = useDispatch();
   
-  
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.id] : e.target.value})
+  }
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -36,6 +41,32 @@ export default function Profile() {
         );
       }
     );
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(updateUserStart());
+    setUpdateSuccess(false);
+    
+    const id = currentUser._id;
+    try {
+      const res = await fetch(`/api/user/update/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json();
+      if(data.success === false){
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch(err) {
+      dispatch(signInFailure(err.message));
+    }
   }
 
   useEffect(() => {
@@ -76,32 +107,50 @@ export default function Profile() {
           )}
         </p>
         <input
+          onChange={handleChange}
           type='text' 
           name='username' 
           id='username' 
           placeholder='Username'
+          defaultValue={currentUser.username}
           className='p-3 border rounded-lg'
         />
 
         <input
+          onChange={handleChange}
           type='text' 
           name='email' 
           id='email' 
           placeholder='Email'
+          defaultValue={currentUser.email}
           className='p-3 border rounded-lg'
         />
 
         <input
-          type='text' 
+          onChange={handleChange}
+          type='password' 
           name='password' 
           id='password' 
           placeholder='Password'
           className='p-3 border rounded-lg'
         />
 
-        <button type='button' className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
-          UPDATE
+        <button 
+          type='button' 
+          onClick={handleSubmit}
+          className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
+          disabled={loading}
+        >
+          {loading ? 'LOADING...': 'UPDATE'}
         </button>
+
+        <p>
+          {error ? <span className='text-red-500'>{error}</span> : ''}
+        </p>
+
+        <p>
+          {updateSuccess ? <span className='text-green-500'>User is updated successfully !</span> : ''}
+        </p>
       </form>
       <div className='flex justify-between mt-5'>
         <span className='text-red-500 cursor-pointer'>Delete Account</span>
