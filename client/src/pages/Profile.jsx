@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import {Link} from 'react-router-dom'
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
 import { app } from '../firebase';
 import { updateUserStart, updateUserSuccess, updateUserFailure, signInFailure, deleteUserStart, deleteUserFailure, deleteUserSuccess, signoutFailure, signoutStart, signoutSuccess } from '../../redux/user/userSlice.js';
@@ -178,6 +179,13 @@ export default function Profile() {
         >
           {loading ? 'LOADING...': 'UPDATE'}
         </button>
+
+        <Link 
+          to={'/create-listing'}
+          className='bg-green-700 p-3 text-white text-center rounded-lg hover:opacity-90'
+        >
+          CREATE LISTING
+        </Link>
 
         <p>
           {error ? <span className='text-red-500'>{error}</span> : ''}
