@@ -121,6 +121,11 @@ export default function Profile() {
   }
 
   const handleDeleteListing = async (listingId) => {
+    const confirmed = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
+
+    if (!confirmed) {
+      return;
+    }
     try {
       const res = await fetch(`/api/listing/delete/${listingId}`, {
         method: 'DELETE'
