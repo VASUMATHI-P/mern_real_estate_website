@@ -120,6 +120,23 @@ export default function Profile() {
     setUserListings(data);
   }
 
+  const handleDeleteListing = async (listingId) => {
+    try {
+      const res = await fetch(`/api/listing/delete/${listingId}`, {
+        method: 'DELETE'
+      })
+      const data = res.json();
+      if(data.success === false){
+        console.log(data.message);
+        return;
+      }
+      setUserListings((prev) => prev.filter((listing) => listing._id !== listingId));
+    } catch(err){
+      console.log(err.message);
+    }
+    
+  }
+
   useEffect(() => {
     if(file){
       handleFileUpload(file);
@@ -251,8 +268,18 @@ export default function Profile() {
               <p className='truncate'>{listing.name}</p>
             </Link>
             <div className='flex flex-col'>
-              <button className='text-red-700 uppercase'>Delete</button>
-              <button className='text-green-700 uppercase'>Edit</button>
+              <button 
+                onClick={() => handleDeleteListing(listing._id)} 
+                className='text-red-700 uppercase'
+              >
+                Delete
+              </button>
+
+              <button 
+                className='text-green-700 uppercase'
+              >
+                Edit
+              </button>
             </div>
           </div>
         ))}
