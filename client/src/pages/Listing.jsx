@@ -134,7 +134,7 @@ export default function Listing() {
                 {listing.furnished ? 'Furnished' : 'Not furnished'}
               </li>
             </ul>
-            {listing && listing.userRef === currentUser._id && !contact &&
+            {listing && listing.userRef !== currentUser._id && !contact &&
               <button 
                 onClick={() => setContact(true)}
                 className='uppercase bg-slate-700 text-white p-3 w-full text-center rounded-md'
