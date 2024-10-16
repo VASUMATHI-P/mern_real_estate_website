@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {Link} from 'react-router-dom'
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
-import { app } from '../firebase';
+import { app } from '../Firebase.js';
 import { updateUserStart, updateUserSuccess, updateUserFailure, signInFailure, deleteUserStart, deleteUserFailure, deleteUserSuccess, signoutFailure, signoutStart, signoutSuccess } from '../../redux/user/userSlice.js';
 
 
