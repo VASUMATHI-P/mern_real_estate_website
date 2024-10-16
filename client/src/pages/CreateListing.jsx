@@ -1,6 +1,6 @@
 import { useState } from "react"
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
-import {app} from '../Firebase'
+import {app} from '../firebase.js'
 import {useSelector} from 'react-redux'
 import {useNavigate} from 'react-router-dom'
 
